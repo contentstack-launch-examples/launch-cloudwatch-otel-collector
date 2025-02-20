@@ -1,14 +1,31 @@
-# Launch-OpenTelemetry-LogTarget-Cloudwatch-Logs-exporter
+# Launch-OpenTelemetry-LogTarget-Cloudwatch-Logs-Exporter
 
-This repo will host an intermediate OTEL collector service between log Target and forward the logs to the AWS Cloudwatch service.
+This repository hosts an intermediate OpenTelemetry (OTEL) Collector service that acts as a bridge between Log Targets and AWS CloudWatch Logs. The service receives logs from Log Targets and forwards them to AWS CloudWatch Logs for storage and analysis.
 
-Please note:
-The request would fail in the case:
-  1. The timestamp in the log message is older than the log_retention period in the otelcol-config.yaml
-  2. The API Request would give 401 in case the bearertoken value doesn't match.
+## Important Notes
 
+### Request Failures
+A request may fail in the following cases:
+1. The timestamp in the log message is older than the `log_retention` period defined in `otelcol-config.yaml`.
+2. The API request will return a `401 Unauthorized` error if the provided bearer token does not match the expected value.
 
+## Debugging Issues
+To diagnose potential issues:
+- Add a **Debug Exporter** to obtain detailed logging information.
+- Integrate a **Health Check Extension** for monitoring the OTEL Collector’s health. You can explore available extensions [here](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension).
+- Learn more about OpenTelemetry by visiting the official documentation [here](https://opentelemetry.io/).
 
-To debug any issue, You can add Debug exporter that will provide more details and You can also integrate health check for the OTEL Collector by using the [extensions here](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension). Learn more about [OpenTelemetry here](https://opentelemetry.io/).
+## Sending gRPC Requests
+To send a gRPC request to the OTEL Collector, refer to the [OpenTelemetry Protocol (OTLP) Specifications](https://github.com/open-telemetry/opentelemetry-proto). You can use tools like:
+- **Postman**
+- **gcurl** (a gRPC-enabled version of curl)
 
-To send a GRPC request you can refer to the [Opentelemetry Proto Specs](https://github.com/open-telemetry/opentelemetry-proto) and use either `Postman` or `gcurl`
+## Running the OTEL Collector Locally
+To start the OTEL Collector locally, run the following command:
+
+```sh
+sh start-otel.sh
+```
+
+This will launch the OTEL Collector using the provided configuration.
+
