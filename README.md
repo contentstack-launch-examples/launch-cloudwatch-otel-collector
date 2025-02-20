@@ -1,1 +1,4 @@
-# Launch-OpenTelemetry-LogTarget-Cloudwatch-connector
+# Launch-OpenTelemetry-LogTarget-Cloudwatch-Logs-exporter
+
+
+
