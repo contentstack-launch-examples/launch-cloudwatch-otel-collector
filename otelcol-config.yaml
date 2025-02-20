@@ -34,4 +34,4 @@ service:
     logs:
       receivers: [otlp]
       processors: []
-      exporters: [ debugawscloudwatchlogs]
+      exporters: [ awscloudwatchlogs]
