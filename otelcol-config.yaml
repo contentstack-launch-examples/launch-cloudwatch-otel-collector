@@ -9,7 +9,7 @@ receivers:
 extensions:
   bearertokenauth/withscheme:
     scheme: "Bearer"
-    token: "hello"
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VySWQiLCJpYXQiOjE3MDgxMjY0MDB9.XvGq3jK6czp3A2Y5R9P-7T3Fd8U6B4MQuLg9bq9ZQxU"
 
 processors:
 exporters:
