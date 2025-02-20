@@ -1,4 +1,4 @@
-# Launch-OpenTelemetry-LogTarget-Cloudwatch-Logs-Exporter
+# Launch OpenTelemetry Collector - LogTarget -> Collector -> AWS Cloudwatch Service
 
 This repository hosts an intermediate OpenTelemetry (OTEL) Collector service that acts as a bridge between Log Targets and AWS CloudWatch Logs. The service receives logs from Log Targets and forwards them to AWS CloudWatch Logs for storage and analysis.
 
