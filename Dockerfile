@@ -13,7 +13,6 @@ COPY --from=collector /otelcol-contrib /otelcol-contrib
 
 COPY otelcol-config.yaml /etc/otelcol-config.yaml
 
-EXPOSE 4319
+EXPOSE 4317
 
 CMD ["/otelcol-contrib",  "--config", "/etc/otelcol-config.yaml"]
-
