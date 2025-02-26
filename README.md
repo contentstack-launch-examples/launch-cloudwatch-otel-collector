@@ -3,7 +3,7 @@
 - Hosts an OTLP Receiver with Authorization Bearer Token value configurable with `otel-contrib.yaml`
 - Export Log Request to Cloudwatch
 
-This repository hosts an intermediate OpenTelemetry (OTEL) Collector service that acts as a bridge between Log Targets and AWS CloudWatch Logs. The service receives logs from Log Targets and forwards them to AWS CloudWatch Logs for storage and analysis.
+This repository hosts an intermediate OpenTelemetry (OTEL) Collector service that acts as a bridge between Log Targets and AWS CloudWatch Logs. The service receives logs from Log Targets and forwards them to AWS CloudWatch Logs for storage and analysis. 
 
 ## Important Notes
 
@@ -32,3 +32,11 @@ sh start-otel.sh
 ```
 
 This will launch the OTEL Collector using the provided configuration.
+
+## Next Steps?
+
+- Host this service using AWS ECS
+- Secure the endpoint of the service using Application Load balancer with correct credentials
+- You'd be required to enable the TLS traffic with a certificate and route the traffic internally to 443 to 4317 that of the running container
+- Verify the endpoint is receiving logs using the GRPC Message in the example folder
+- Follow the step to [Create the Log Target ](https://www.contentstack.com/docs/developers/launch/log-targets#create-a-log-target) add the endpoint of your service. And don't miss to configure the the Bearer Token(currently referred as Secret Token) 
