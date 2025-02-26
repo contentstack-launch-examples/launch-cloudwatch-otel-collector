@@ -40,3 +40,10 @@ This will launch the OTEL Collector using the provided configuration.
 - You'd be required to enable the TLS traffic and route the traffic internally from 443 to 4317 that of the running container via target groups and security groups
 - Verify the endpoint is receiving logs using the GRPC Message in the example folder
 - Follow the step to [Create the Log Target ](https://www.contentstack.com/docs/developers/launch/log-targets#create-a-log-target) add the endpoint of your service. And don't miss to configure the the Bearer Token(currently referred to as Secret Token) 
+
+
+
+## Still facing an issue? 
+
+- Add an issue to this GitHub Repo with all the necessary details
+- Don't hesitate to reach out to the Contentstack Launch support. This adds visibility to the broader team and they can prioritise unblocking you
