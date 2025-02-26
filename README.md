@@ -36,7 +36,7 @@ This will launch the OTEL Collector using the provided configuration.
 ## Next Steps?
 
 - Host this service using AWS ECS
-- Secure the endpoint of the service using Application Load balancer with correct credentials
-- You'd be required to enable the TLS traffic with a certificate and route the traffic internally to 443 to 4317 that of the running container
+- Secure the endpoint of the service using the Application Load balancer.
+- You'd be required to enable the TLS traffic and route the traffic internally from 443 to 4317 that of the running container via target groups and security groups
 - Verify the endpoint is receiving logs using the GRPC Message in the example folder
-- Follow the step to [Create the Log Target ](https://www.contentstack.com/docs/developers/launch/log-targets#create-a-log-target) add the endpoint of your service. And don't miss to configure the the Bearer Token(currently referred as Secret Token) 
+- Follow the step to [Create the Log Target ](https://www.contentstack.com/docs/developers/launch/log-targets#create-a-log-target) add the endpoint of your service. And don't miss to configure the the Bearer Token(currently referred to as Secret Token) 
