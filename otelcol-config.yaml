@@ -12,6 +12,10 @@ extensions:
     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VySWQiLCJpYXQiOjE3MDgxMjY0MDB9.XvGq3jK6czp3A2Y5R9P-7T3Fd8U6B4MQuLg9bq9ZQxU"
 
 processors:
+  batch:
+    send_batch_max_size: 10000
+    timeout: 2s
+
 exporters:
   awscloudwatchlogs:
     log_group_name: "/ecs/otel"
@@ -33,5 +37,5 @@ service:
   pipelines:
     logs:
       receivers: [otlp]
-      processors: []
+      processors: [batch]
       exporters: [ awscloudwatchlogs]
