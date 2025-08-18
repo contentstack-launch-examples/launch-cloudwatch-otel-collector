@@ -72,7 +72,40 @@ export AWS_PROFILE=otel-project
 # No manual configuration needed
 ```
 
-## ⚙️ Step 3: Configure Terraform
+## 🔐 Step 3: Configure JWT Bearer Token
+
+**CRITICAL:** You must set the JWT Bearer token configured in your Launch Log Target settings.
+
+### 🎯 **Get Your JWT Token:**
+
+1. **Go to Launch Console** → Log Targets  
+2. **Select your target** (or create a new one)
+3. **Open Configuration tab**
+4. **Copy the Bearer Token** (JWT format)
+
+### **Configure the Token:**
+
+**Method 1: Environment Variable (Recommended)**
+```bash
+# Set the token for all operations
+export LAUNCH_JWT_TOKEN="your-jwt-bearer-token-from-launch-console"
+
+# Add to your shell profile for persistence
+echo 'export LAUNCH_JWT_TOKEN="your-jwt-bearer-token-from-launch-console"' >> ~/.bashrc
+```
+
+**Method 2: Direct Configuration**
+```bash
+# Edit the OpenTelemetry configuration
+nano otelcol-config.yaml
+
+# Replace: YOUR_JWT_BEARER_TOKEN_FROM_LAUNCH_LOG_TARGET  
+# With: your-actual-jwt-token-from-launch-console
+```
+
+⚠️ **Important:** This token authenticates your OpenTelemetry collector with Launch's log ingestion system.
+
+## ⚙️ Step 4: Configure Terraform
 
 ### Create Your Configuration
 ```bash

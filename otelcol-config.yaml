@@ -9,7 +9,9 @@ receivers:
 extensions:
   bearertokenauth/withscheme:
     scheme: "Bearer"
-    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VySWQiLCJpYXQiOjE3MDgxMjY0MDB9.XvGq3jK6czp3A2Y5R9P-7T3Fd8U6B4MQuLg9bq9ZQxU"
+    # IMPORTANT: Replace with your JWT token from Launch Log Target settings
+    # Get this from: Launch Console > Log Targets > Your Target > Configuration > Bearer Token
+    token: "YOUR_JWT_BEARER_TOKEN_FROM_LAUNCH_LOG_TARGET"
 
 processors:
   batch:

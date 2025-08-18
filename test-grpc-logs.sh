@@ -131,8 +131,26 @@ echo "  • 2 log records (INFO and WARN levels)"
 echo "  • Trace/Span IDs included"
 echo ""
 
-# Bearer token from otelcol-config.yaml
-BEARER_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VySWQiLCJpYXQiOjE3MDgxMjY0MDB9.XvGq3jK6czp3A2Y5R9P-7T3Fd8U6B4MQuLg9bq9ZQxU"
+# IMPORTANT: Get your Bearer token from Launch Log Target settings
+# Launch Console > Log Targets > Your Target > Configuration > Bearer Token
+# This token must match the one configured in otelcol-config.yaml
+BEARER_TOKEN="${LAUNCH_JWT_TOKEN:-YOUR_JWT_BEARER_TOKEN_FROM_LAUNCH_LOG_TARGET}"
+
+# Check if token is configured
+if [[ "$BEARER_TOKEN" == "YOUR_JWT_BEARER_TOKEN_FROM_LAUNCH_LOG_TARGET" ]]; then
+    echo_error "❌ JWT Bearer token not configured!"
+    echo ""
+    echo_info "Please set your JWT token in one of these ways:"
+    echo ""
+    echo "1. Set environment variable:"
+    echo "   export LAUNCH_JWT_TOKEN=\"your-jwt-token-here\""
+    echo ""
+    echo "2. Or edit this script and replace the placeholder token"
+    echo ""
+    echo "3. Get your token from: Launch Console > Log Targets > Configuration"
+    echo ""
+    exit 1
+fi
 
 # Test the gRPC endpoint with Bearer token authentication
 echo_header "Sending logs to OpenTelemetry collector..."
