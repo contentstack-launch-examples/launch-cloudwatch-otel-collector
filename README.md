@@ -87,18 +87,54 @@ fargate_memory = 1024  # 1GB RAM
 
 💡 **Single AZ deployment:** Save ~$32/month for dev/test
 
-## 🧪 Testing
+## 🧪 Testing Your Deployment
+
+### 🎯 Quick Test with Automated Script
+
+Use the included test script to verify your secure gRPC endpoint:
 
 ```bash
-# Get your endpoint
+# Test your deployed OpenTelemetry collector
+./test-grpc-logs.sh
+```
+
+**What it does:**
+- ✅ Connects securely via HTTPS/HTTP2 with proper SNI
+- ✅ Authenticates using Bearer token (configured in otelcol-config.yaml)  
+- ✅ Sends valid OpenTelemetry logs in OTLP format
+- ✅ Verifies logs reach CloudWatch (/ecs/otel log group)
+- ✅ Provides troubleshooting steps if anything fails
+
+### 📊 Verify Logs in CloudWatch
+
+```bash
+# Watch logs being exported to CloudWatch
+aws logs tail /ecs/otel --follow
+
+# Check specific log events
+aws logs get-log-events \
+  --log-group-name '/ecs/otel' \
+  --log-stream-name 'tastecard/logs'
+```
+
+### 🔧 Manual gRPC Testing
+
+```bash
+# Get your secure endpoint URL
 terraform output grpc_endpoint
 
-# Test connection
-grpcurl your-alb-dns:443 list
+# Test with grpcurl (requires proto files)
+grpcurl -servername "your-domain.com" \
+  -proto opentelemetry/proto/collector/logs/v1/logs_service.proto \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  your-alb-dns:443 \
+  opentelemetry.proto.collector.logs.v1.LogsService/Export
 
-# Monitor logs
+# Monitor OpenTelemetry collector logs
 aws logs tail /ecs/launch-log-target --follow
 ```
+
+> 💡 **Pro Tip:** The `test-grpc-logs.sh` script handles all the complexity - proto files, authentication, proper JSON format, and verification steps!
 
 ## 📚 Documentation
 
