@@ -60,7 +60,18 @@ cd .. && ./build-and-push.sh
 
 ## 📋 Configuration
 
-**Required:** `terraform/terraform.tfvars`
+### 🔐 **Required: JWT Bearer Token**
+Get your JWT token from **Launch Console > Log Targets > Configuration**:
+```bash
+# Set as environment variable (recommended)
+export LAUNCH_JWT_TOKEN="your-jwt-bearer-token-from-launch-console"
+
+# Or update in otelcol-config.yaml:
+token: "your-jwt-bearer-token-from-launch-console"
+```
+
+### 🏗️ **Required: Terraform Configuration**
+**`terraform/terraform.tfvars`:**
 ```hcl
 ssl_certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/your-cert"
 aws_region = "us-east-1"
@@ -94,16 +105,22 @@ fargate_memory = 1024  # 1GB RAM
 Use the included test script to verify your secure gRPC endpoint:
 
 ```bash
+# Set your JWT token from Launch Log Target settings
+export LAUNCH_JWT_TOKEN="your-jwt-token-from-launch-console"
+
 # Test your deployed OpenTelemetry collector
 ./test-grpc-logs.sh
 ```
 
 **What it does:**
 - ✅ Connects securely via HTTPS/HTTP2 with proper SNI
-- ✅ Authenticates using Bearer token (configured in otelcol-config.yaml)  
+- ✅ Authenticates using Bearer token (from Launch Log Target settings)
 - ✅ Sends valid OpenTelemetry logs in OTLP format
 - ✅ Verifies logs reach CloudWatch (/ecs/otel log group)
 - ✅ Provides troubleshooting steps if anything fails
+
+**🔐 JWT Token Required:** The script will guide you to get your JWT token from:
+**Launch Console > Log Targets > Your Target > Configuration > Bearer Token**
 
 ### 📊 Verify Logs in CloudWatch
 
