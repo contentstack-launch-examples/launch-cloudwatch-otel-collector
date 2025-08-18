@@ -66,7 +66,43 @@ if ! aws ecr describe-repositories --repository-names $ECR_REPOSITORY_NAME --reg
 fi
 echo_info "ECR repository exists."
 
-# Login to ECR
+# Smart image preparation - pull from Docker Hub BEFORE logging into ECR
+echo_info "Preparing base image from Docker Hub (before ECR login)..."
+
+check_and_pull_image() {
+    local image=$1
+    local retries=2
+    local count=0
+    
+    # Check if image exists locally first
+    if docker images --format "table {{.Repository}}:{{.Tag}}" | grep -q "^${image}$"; then
+        echo_info "$image is already available locally ✅"
+        return 0
+    fi
+    
+    # Try to pull with limited retries (no timeout needed on macOS)
+    while [ $count -lt $retries ]; do
+        echo_info "Attempting to pull $image (attempt $((count + 1))/$retries)..."
+        if docker pull $image; then
+            echo_info "Successfully pulled $image"
+            return 0
+        else
+            count=$((count + 1))
+            if [ $count -lt $retries ]; then
+                echo_warn "Failed to pull $image, retrying in 3 seconds..."
+                sleep 3
+            fi
+        fi
+    done
+    echo_warn "Could not pull $image, will try to build anyway (using cached layers if available)"
+    return 1
+}
+
+# Pull base images from Docker Hub and AWS Public ECR (before ECR login)
+check_and_pull_image "otel/opentelemetry-collector-contrib:latest" || true
+check_and_pull_image "public.ecr.aws/docker/library/alpine:latest" || true
+
+# Now login to ECR after pulling base images from Docker Hub
 echo_info "Logging into ECR..."
 aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URL
 if [ $? -ne 0 ]; then
@@ -77,13 +113,59 @@ echo_info "Successfully logged into ECR."
 
 # Build Docker image
 echo_info "Building Docker image for Linux platform..."
-# Use buildx for cross-platform builds
-docker buildx build --platform linux/amd64 --load -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .
-if [ $? -ne 0 ]; then
-    echo_error "Failed to build Docker image."
-    exit 1
+
+# Use buildx with retry logic and better options
+build_with_retry() {
+    local retries=3
+    local count=0
+    
+    while [ $count -lt $retries ]; do
+        echo_info "Building Docker image (attempt $((count + 1))/$retries)..."
+        
+        # Use buildx with multiple strategies to avoid network issues
+        if docker buildx build \
+            --platform linux/amd64 \
+            --load \
+            --progress=plain \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .; then
+            echo_info "Docker image built successfully."
+            return 0
+        else
+            count=$((count + 1))
+            if [ $count -lt $retries ]; then
+                echo_warn "Build failed, retrying in 10 seconds..."
+                # Clean up any partial builds
+                docker builder prune -f --filter until=1h || true
+                sleep 10
+            fi
+        fi
+    done
+    
+    echo_error "Failed to build Docker image after $retries attempts"
+    return 1
+}
+
+# Try building with retry logic
+if ! build_with_retry; then
+    echo_warn "Buildx failed, trying regular docker build as fallback..."
+    if docker build --platform linux/amd64 -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .; then
+        echo_info "Fallback docker build succeeded."
+    else
+        echo_warn "Platform-specific build failed, trying without platform specification..."
+        if docker build -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .; then
+            echo_info "Generic docker build succeeded."
+        else
+            echo_error "All build strategies failed."
+            echo_info "This might be due to Docker Hub CDN connectivity issues."
+            echo_info "You can try:"
+            echo_info "  1. Wait a few minutes and retry"
+            echo_info "  2. Check your internet connection"
+            echo_info "  3. Try using a VPN if available"
+            exit 1
+        fi
+    fi
 fi
-echo_info "Docker image built successfully."
 
 # Tag image for ECR
 echo_info "Tagging image for ECR..."
