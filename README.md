@@ -6,6 +6,13 @@
 
 Production-ready OpenTelemetry Collector with **HTTPS gRPC**, **HTTP/2**, and **CloudWatch** integration. Deploy to AWS in 5 minutes with your SSL certificate.
 
+This repository hosts an intermediate OpenTelemetry (OTEL) Collector service that acts as a bridge between Log Targets and AWS CloudWatch Logs. The service receives logs from Log Targets and forwards them to AWS CloudWatch Logs for storage and analysis.
+
+**Key Features:**
+- Hosts an OTLP Receiver with Authorization Bearer Token value configurable with `otelcol-config.yaml`
+- Export Log Request to CloudWatch
+- Secure gRPC endpoint with TLS/HTTPS support
+
 ## ✨ Features
 
 🔐 **Enterprise Security** - HTTPS/TLS + HTTP/2 + VPC isolation  
@@ -136,6 +143,8 @@ aws logs get-log-events \
 
 ### 🔧 Manual gRPC Testing
 
+To send a gRPC request to the OTEL Collector, you can use test-grpc-logs.sh script which internally uses grpcurl
+
 ```bash
 # Get your secure endpoint URL
 terraform output grpc_endpoint
@@ -161,10 +170,19 @@ aws logs tail /ecs/launch-log-target --follow
 
 ## 🔧 Development
 
-```bash
-# Local testing
-./start-otel.sh
+### 🏠 Running the OTEL Collector Locally
 
+1. Update the AWS Credentials in the Dockerfile
+2. Start the OTEL collector service with the following command:
+```bash
+sh start-otel.sh
+```
+
+This will launch the OTEL Collector using the provided configuration.
+
+### 🚀 Production Deployment
+
+```bash
 # Update deployed service
 ./build-and-push.sh
 ./update-service.sh
@@ -174,6 +192,13 @@ aws ecs update-service --cluster <cluster> --service <service> --desired-count 3
 ```
 
 ## 🔍 Troubleshooting
+
+### ⚠️ Common Service Issues
+
+**Service fails to export Logs to CloudWatch:**
+An Export Log request may fail in the following cases:
+1. The timestamp in the log message is older than the `log_retention` period defined in `otelcol-config.yaml`.
+2. The API request will return a `401 Unauthorized` error if the provided bearer token does not match the expected value in the `otel-contrib.yaml`.
 
 **ECS Tasks Not Starting?**
 ```bash
@@ -187,6 +212,13 @@ curl -v https://$(terraform output -raw alb_dns_name)/
 aws elbv2 describe-target-health --target-group-arn <arn>
 ```
 
+### 🛠️ Debugging Issues
+
+To diagnose potential issues:
+- Add a **Debug Exporter** to obtain detailed logging information.
+- Integrate a **Health Check Extension** for monitoring the OTEL Collector's health. You can explore available extensions [here](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension).
+- Learn more about OpenTelemetry by visiting the official documentation [here](https://opentelemetry.io/).
+
 **More help:** [Complete troubleshooting guide](SETUP.md#troubleshooting)
 
 ## 🗑️ Cleanup
@@ -194,6 +226,19 @@ aws elbv2 describe-target-health --target-group-arn <arn>
 ```bash
 cd terraform && terraform destroy
 ```
+
+## 🚀 Next Steps
+
+- Host this service using AWS ECS
+- Secure the endpoint of the service using the Application Load balancer
+- You'd be required to enable the TLS traffic and route the traffic internally from 443 to 4317 that of the running container via target groups and security groups
+- Verify the endpoint is receiving logs using the GRPC Message in the example folder
+- Follow the step to [Create the Log Target](https://www.contentstack.com/docs/developers/launch/log-targets#create-a-log-target) add the endpoint of your service. And don't miss to configure the Bearer Token (currently referred to as Secret Token)
+
+## 🆘 Still facing an issue?
+
+- Add an issue to this GitHub Repo with all the necessary details
+- Don't hesitate to reach out to the Contentstack Launch support. This adds visibility to the broader team and they can prioritise unblocking you
 
 ## 🤝 Contributing
 
