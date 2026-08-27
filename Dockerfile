@@ -1,7 +1,10 @@
 FROM otel/opentelemetry-collector-contrib:latest AS collector
 
 FROM public.ecr.aws/docker/library/alpine:latest AS debug
-RUN apk add --no-cache coreutils curl
+# snyk-fix(27-Aug-2026): pinned openssl to 3.5.8-r0 (SNYK-ALPINE324-OPENSSL-19257375 + 9 more)
+# — alpine:latest currently resolves to 3.24.x, which still ships 3.5.7-r0.
+# snyk-fix TODO: remove this pin once the base image itself ships >= 3.5.8-r0; re-scan will confirm.
+RUN apk add --no-cache coreutils curl openssl=3.5.8-r0
 COPY --from=collector /otelcol-contrib /otelcol-contrib
 
 # Copy our configuration
