@@ -1,0 +1,23 @@
+# Example Terraform variables file
+# Copy this file to terraform.tfvars and modify the values as needed
+
+# AWS Configuration
+aws_region = "us-east-1"
+
+# Environment
+environment = "prod"
+
+# VPC Configuration
+vpc_cidr = "10.0.0.0/16"
+
+# ECS Fargate Configuration
+fargate_cpu    = 256  # 0.25 vCPU
+fargate_memory = 512  # 512 MiB
+
+# Application Configuration
+app_count = 1  # Number of tasks to run
+
+# SSL Certificate Configuration
+# REQUIRED: Replace with your certificate ARN from AWS Certificate Manager
+# Example: ssl_certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+ssl_certificate_arn = "YOUR_CERTIFICATE_ARN_HERE"

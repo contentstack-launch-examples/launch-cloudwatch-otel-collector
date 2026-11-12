@@ -1,0 +1,43 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+        auth: 
+          authenticator: bearertokenauth/withscheme
+
+extensions:
+  bearertokenauth/withscheme:
+    scheme: "Bearer"
+    # IMPORTANT: Replace with your JWT token from Launch Log Target settings
+    # Get this from: Launch Console > Log Targets > Your Target > Configuration > Bearer Token
+    token: "YOUR_JWT_BEARER_TOKEN_FROM_LAUNCH_LOG_TARGET"
+
+processors:
+  batch:
+    send_batch_max_size: 10000
+    timeout: 2s
+
+exporters:
+  awscloudwatchlogs:
+    log_group_name: "/ecs/otel"
+    log_stream_name: "tastecard/logs"
+    log_retention: 30
+    region: "us-east-1"
+    sending_queue:
+      enabled: true
+
+  debug:
+    verbosity: detailed
+    sampling_initial: 5
+    sampling_thereafter: 200
+
+service:
+  extensions: [ bearertokenauth/withscheme]
+  telemetry:
+    logs:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [ awscloudwatchlogs]

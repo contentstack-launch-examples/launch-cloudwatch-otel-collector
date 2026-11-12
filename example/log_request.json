@@ -1,0 +1,58 @@
+{
+    "resource_logs": [
+        {
+            "resource": {
+                "attributes": [
+                ],
+                "dropped_attributes_count": 993869557
+            },
+            "scope_logs": [
+                {
+                    "scope": {
+                        "name": "dolore ea nulla",
+                        "version": "eu",
+                        "attributes": [],
+                        "dropped_attributes_count": 2605362448
+                    },
+                    "log_records": [
+                        {
+                            "time_unix_nano": "5",
+                            "observed_time_unix_nano": "1740044320812",
+                            "severity_number": "SEVERITY_NUMBER_DEBUG4",
+                            "severity_text": "ex sit elit adipisicing id",
+                            "body": {
+                                "string_value": "Lorem Excepteur",
+                                "bool_value": false,
+                                "int_value": "09766",
+                                "double_value": 44343278.58707076,
+                                "array_value": {
+                                    "values": []
+                                },
+                                "kvlist_value": {
+                                    "values": []
+                                },
+                                "bytes_value": "Hz7nzxurl+Yd5F5dQR5OsC8tr/uFOUoWQg3J6BQ2"
+                            },
+                            "attributes": [
+                                {
+                                    "key": "aliquip mollit",
+                                    "value": {}
+                                },
+                                {
+                                    "key": "aliquip",
+                                    "value": {}
+                                }
+                            ],
+                            "dropped_attributes_count": 2687196283,
+                            "flags": 3199521521
+                        }
+                    ],
+                    "schema_url": "laboris cupidatat"
+                }
+            ],
+            "schema_url": "tempor adipisicing deserunt"
+        }
+    ]
+}
+
+
